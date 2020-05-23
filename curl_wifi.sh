@@ -1,5 +1,6 @@
 #!/bin/bash
 # Control you wifi device with cURL
+# Do not get locked out, run from a device connected over LAN, backdoor for your wifi radio
 if [ ! "$#" -ne 3 ]; then
     user=${2}
     p_raw=${3}
@@ -33,13 +34,13 @@ if [ ! "$#" -ne 3 ]; then
 
     if [ "$1" == "down" ]; then
 
-      #Command to Disable 5G Radio
-          cmd="{\"csrf\":{\"csrf_param\":\""${csrf_param}"\",\"csrf_token\":\""${csrf_token}"\"},\"data\":{\"Enable5G\":false,\"Enable2G\":true,\"OldEnableMaxPower\":false,\"NeedReboot\":false}}"
+      #Command to Disable 2G Radio
+          cmd="{\"csrf\":{\"csrf_param\":\""${csrf_param}"\",\"csrf_token\":\""${csrf_token}"\"},\"data\":{\"Enable5G\":false,\"Enable2G\":false,\"OldEnableMaxPower\":false,\"NeedReboot\":false}}"
         curl -s 'http://192.168.1.1/api/ntwk/wlanradio' -H 'Connection: keep-alive' -H "${cookie}" --data-binary "${cmd}"
 
         elif [ "$1" == "up" ] ; then
-      # Command to Enable 5G Radio
-          cmd="{\"csrf\":{\"csrf_param\":\""${csrf_param}"\",\"csrf_token\":\""${csrf_token}"\"},\"data\":{\"Enable5G\":true,\"Enable2G\":true,\"OldEnableMaxPower\":false,\"NeedReboot\":false}}"
+      # Command to Enable 2G Radio
+          cmd="{\"csrf\":{\"csrf_param\":\""${csrf_param}"\",\"csrf_token\":\""${csrf_token}"\"},\"data\":{\"Enable5G\":false,\"Enable2G\":true,\"OldEnableMaxPower\":false,\"NeedReboot\":false}}"
       curl -s 'http://192.168.1.1/api/ntwk/wlanradio' -H 'Connection: keep-alive' -H "${cookie}" --data-binary "${cmd}"
 
     elif [ "$1" == "status" ] ; then
