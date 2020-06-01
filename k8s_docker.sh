@@ -1,6 +1,6 @@
 #!/bin/bash
 # Set up a docker (Container Runtime) on worker node.
-# Use: bash <(curl -s https://raw.githubusercontent.com/sourceplant/sourceleaf/master/k8s_containerd.sh)
+# Use: bash <(curl -s https://raw.githubusercontent.com/sourceplant/sourceleaf/master/k8s_docker.sh)
 GREEN=$'\e[0;32m' ; RED=$'\e[0;31m' ; NC=$'\e[0m'
 ^ () {
 if [[ "$BASH_COMMAND" =~ ^echo.*  ]]; then
