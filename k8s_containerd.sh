@@ -17,6 +17,7 @@ fi
 #set +v
 trap '^' DEBUG
 #set -v
+echo '
 # The container runtime is the software that is responsible for running containers.
 # Kubernetes supports several container runtimes: Docker
 #, containerd
@@ -37,20 +38,23 @@ trap '^' DEBUG
   # logging         - Persisting container logs - Logging can be build on top of containerd because the container’s STDIO will be provided to the clients and they can persist any way they see fit. There is no io copying of container STDIO in containerd.
 
 # Note: containerd is designed to be embedded into a larger system, hence it only includes a barebone CLI (ctr) specifically for development and debugging purpose, with no mandate to be human-friendly, and no guarantee of interface stability over time.
-
-# Check system..
+'
+echo '# Check system..'
 uname -n
 
-# Persist and load overlay and br_netfilter
+echo '# Persist overlay and br_netfilter'
 cat > /etc/modules-load.d/containerd.conf <<EOF
 overlay
 br_netfilter
 EOF
 
+echo '# Load overlay'
 modprobe overlay
+
+echo '# Load netfilter'
 modprobe br_netfilter
 
-# Setup required sysctl params, these persist across reboots.
+echo '# Setup required sysctl params, these persist across reboots.'
 cat > /etc/sysctl.d/99-kubernetes-cri.conf <<EOF
 net.bridge.bridge-nf-call-iptables  = 1
 net.ipv4.ip_forward                 = 1
@@ -59,16 +63,16 @@ EOF
 
 sysctl --system
 
-### Install required packages
+echo '# Install required packages'
 yum install -y yum-utils device-mapper-persistent-data lvm2
 
-# Download the containerd tarball...
+echo '# Download the containerd tarball...'
 cd /tmp && curl -C -O -L https://github.com/containerd/containerd/releases/download/v1.3.4/containerd-1.3.4.linux-amd64.tar.gz && cd ~ 
 
-# Extract to /usr ...  
+echo '# Extract to /usr ...  '
 cd /usr && tar -xvf /tmp/containerd-1.3.4.linux-amd64.tar.gz && cd ~
 
-# Package does not contain any systemd service files, crete one....
+echo '# Package does not contain any systemd service files, crete one....'
 cat > /usr/lib/systemd/system/containerd.service << EOF
 [Unit]
 Description=containerd container runtime
@@ -91,16 +95,17 @@ TasksMax=infinity
 WantedBy=multi-user.target
 EOF
 
-# Verify the service file
+echo '# Verify the service file'
 ls -l /usr/lib/systemd/system/containerd.service
 
-# Package does not contain any config file, creating one...
+echo '# Package does not contain any config file, creating one...'
 mkdir -p /etc/containerd
 containerd config default > /etc/containerd/config.toml
 
-# Note: You can check all supported plugins in previously created /etc/containerd/config.toml file...
+echo '# Note: You can check all supported plugins in previously created /etc/containerd/config.toml file...'
 cat /etc/containerd//config.toml | grep -i plugin
 
+echo '
 # Note: Indentation shows the plugin configs
 # Use cases of this config file
 # plugins."io.containerd.grpc.v1.cri" is the cri interface for kubelet, earlier it was a standalone binary cri-containerd
@@ -108,15 +113,16 @@ cat /etc/containerd//config.toml | grep -i plugin
 # default runtime is runc, snapshotter is "overlayfs", registry is docker
 # You can configure CNI plugin for networking
 # You can configure runtime for kata etc..  
-pwd
-
+'
+echo '
 # A systemd init system eg centos7, the init process consumes "cgroup" and  acts as a cgroup manager
 # Container runtime and the kubelet use the "cgroupfs" cgroup manager
 # Two managers end up with two views of the resources and could cause unstability
 # Use systemd as the cgroup driver for container runtime as well.
 # To use the systemd cgroup driver instead of cgroups, set plugins.cri.systemd_cgroup = true in /etc/containerd/config.toml.
+'
 
-
+echo '
 # Let me explain overlay concept, why it is here..
 # ? Docker images can be really big
 # ? every container needs a copy of its image
@@ -128,60 +134,69 @@ pwd
 # the upper directory of the filesystem can be both read to and written from
 # When a process reads a file, the overlayfs filesystem driver looks in the upper directory and reads the file from there if it’s present. Otherwise, it looks in the lower directory.
 # When a process writes a file, overlayfs will just write it to the upper directory.
-pwd
-
+'
+echo '
 # Note:
 # The overlay and overlay2 drivers are supported on xfs backing filesystems
 # but only with d_type=true enabled. Use xfs_info to verify that the ftype option is set to 1.
 # To format an xfs filesystem correctly, use the flag -n ftype=1
+'
 pwd
 
-# Check ftype for the filesystem
+echo '# Check ftype for the filesystem'
 xfs_info / | grep -Po "ftype([^$]*)"
 
+echo '
 # If ftype is 0, use a separate backing filesystem from the one used by /var/lib/,
 # create and mount it into /var/lib/containerd.
 # Make sure add this mount to /etc/fstab to make it permanent.
 # Below are the commands, leaving on you to decide
+'
 cat << EOF
 mkfs.xfs -f -n ftype=1 /dev/<disk>
 mkdir -p /var/lib/containerd/
 mount /dev/sdb/ /var/lib/containerd/
 EOF
 
-# Start up the containerd...
+echo '# Start up the containerd...'
 systemctl status containerd.service
 systemctl enable containerd.service
 systemctl start containerd.service
 systemctl status containerd.service
 
+echo '
 # Test the setup...
 # Fetch a image from docker repo
+'
 ctr image pull docker.io/library/hello-world:latest
 
-# List the image
+echo '# List the image'
 ctr image ls
 
-# List the image... friendly one
+echo '# List the image... friendly one'
 ctr image list -q
 
-# Check where it is stored on system..
+echo '# Check where it is stored on system..'
 find /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs
 
-# Run a container demo with the image..
+echo '# Run a container demo with the image..'
 ctr container create docker.io/library/hello-world:latest demo
 
+echo '
 # Oops, Note: the output is not redirected to the CLI by default. Unlike Docker, we need to use the full path with the object every time we use a container image. Also, the image needs to be pulled before being able to run a container, which we already did in last step.
 
-# Whatever, lets check is it up..
+# Whatever, lets check is it up..'
 ctr container list
 
-# To delete the image.
+echo '# To delete the image.'
 ctr image remove docker.io/library/hello-world:latest
-# ? This would delete the image. What would happen to your container?
+
+echo '# ? This would delete the image. What would happen to your container?'
 ctr container list
+
+echo '
 # Your container would still be running. This is because containerd works on references, and in this case, the image is no longer being referenced as an image but it is still being referenced by the container (as a snapshot), so it wouldn’t be deleted as long as it’s being referenced.
 # ? Did not get it, now worries
-
-# Delete the container
+'
+echo '# Delete the container'
 ctr container remove demo
