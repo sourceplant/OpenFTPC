@@ -11,9 +11,9 @@ trap '_________________' DEBUG
 set -v
 # The container runtime is the software that is responsible for running containers.
 # Kubernetes supports several container runtimes: Docker
- , containerd
- , CRI-O
- , and any implementation of the Kubernetes CRI (Container Runtime Interface).
+#, containerd
+#, CRI-O
+#, and any implementation of the Kubernetes CRI (Container Runtime Interface).
 # This is about <containerd>
 #####  Containerd - A container Runtime #########
 # Runtimes Component/feature -  in of scope.
