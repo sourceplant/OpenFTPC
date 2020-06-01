@@ -21,15 +21,15 @@ trap '^' DEBUG
 echo '
 # (Install Docker CE)
 ## Set up the repository
-### Install required packages
 '
+echo '### Install required packages'
 yum install -y yum-utils device-mapper-persistent-data lvm2
 
 echo '## Add the Docker repository'
 curl -s https://download.docker.com/linux/centos/docker-ce.repo > /etc/yum.repos.d/docker-ce.repo
 
 echo '# Install Docker CE'
-yum update -y && yum install -y \
+yum install -y \
   containerd.io-1.2.13 \
   docker-ce-19.03.8 \
   docker-ce-cli-19.03.8
