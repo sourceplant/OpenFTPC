@@ -54,20 +54,21 @@ modprobe overlay
 echo '# Load netfilter'
 modprobe br_netfilter
 
-echo '# Setup required sysctl params, these persist across reboots.'
+echo '# Setup required sysctl params to persist across reboots.'
 cat > /etc/sysctl.d/99-kubernetes-cri.conf <<EOF
 net.bridge.bridge-nf-call-iptables  = 1
 net.ipv4.ip_forward                 = 1
 net.bridge.bridge-nf-call-ip6tables = 1
 EOF
 
+echo '# Loading systcl params'
 sysctl --system
 
 echo '# Install required packages'
 yum install -y yum-utils device-mapper-persistent-data lvm2
 
 echo '# Download the containerd tarball...'
-cd /tmp && curl -C -O -L https://github.com/containerd/containerd/releases/download/v1.3.4/containerd-1.3.4.linux-amd64.tar.gz && cd ~ 
+cd /tmp && curl -C - -O -L https://github.com/containerd/containerd/releases/download/v1.3.4/containerd-1.3.4.linux-amd64.tar.gz && cd ~ 
 
 echo '# Extract to /usr ...  '
 cd /usr && tar -xvf /tmp/containerd-1.3.4.linux-amd64.tar.gz && cd ~
