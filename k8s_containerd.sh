@@ -18,12 +18,15 @@ fi
 trap '^' DEBUG
 #set -v
 echo '
+####### Set up a containerd (Container Runtime) on worker node. ########
+
 # The container runtime is the software that is responsible for running containers.
 # Kubernetes supports several container runtimes: Docker
 #, containerd
 #, CRI-O
 #, and any implementation of the Kubernetes CRI (Container Runtime Interface).
 # This is about <containerd>
+
 #####  Containerd - A container Runtime #########
 # Runtimes Component/feature -  in of scope.
   # execution       - Provide an extensible execution layer for executing a container - in - Create,start, stop pause, resume exec, signal, delete
