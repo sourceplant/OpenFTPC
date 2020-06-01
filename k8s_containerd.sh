@@ -1,5 +1,6 @@
 !#/bin/bash
 # Set up a containerd (Container Runtime) on worker node.
+# Use: bash <(curl -s https://raw.githubusercontent.com/sourceplant/sourceleaf/master/k8s_containerd.sh)
 _________________ () {
 #echo "$BASH_COMMAND"
 read -r -p "" -t 120 -n 1 -s
