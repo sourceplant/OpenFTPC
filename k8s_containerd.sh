@@ -55,7 +55,7 @@ sysctl --system
 yum install -y yum-utils device-mapper-persistent-data lvm2
 
 # Download the containerd tarball...
-cd /tmp && curl -O -L https://github.com/containerd/containerd/releases/download/v1.3.4/containerd-1.3.4.linux-amd64.tar.gz && cd ~ 
+cd /tmp && curl -C -O -L https://github.com/containerd/containerd/releases/download/v1.3.4/containerd-1.3.4.linux-amd64.tar.gz && cd ~ 
 
 # Extract to /usr ...  
 cd /usr && tar -xvf /tmp/containerd-1.3.4.linux-amd64.tar.gz && cd ~
