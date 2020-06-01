@@ -1,3 +1,4 @@
+!#/bin/bash
 _________________ () {
 #echo "$BASH_COMMAND"
 read -r -p "" -t 120 -n 1 -s
