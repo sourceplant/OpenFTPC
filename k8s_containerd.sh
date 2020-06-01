@@ -2,17 +2,20 @@
 # Set up a containerd (Container Runtime) on worker node.
 # Use: bash <(curl -s https://raw.githubusercontent.com/sourceplant/sourceleaf/master/k8s_containerd.sh)
 GREEN=$'\e[0;32m' ; RED=$'\e[0;31m' ; NC=$'\e[0m'
-^^^^^ () {
-echo "#"
-echo "# ${RED}${BASH_COMMAND}${NC}"
-read -r -p "" -t 120 -n 1 -s
+^ () {
+if [[ "$BASH_COMMAND" =~ ^echo.*  ]]; then
+echo "${GREEN}"
+else
+echo -e "${NC}# ${RED}${BASH_COMMAND}${NC}\c"
+read -r -p "" -t 120 -n 1 -s ; echo
 # If you wanted to see output in a clear screen, keep +v -v section disabled
 #clear
-#echo "# ${RED}${BASH_COMMAND}${NC}"
+#echo -e "# ${RED}${BASH_COMMAND}${NC}"
+fi
 }
 # If you wanted to enable comments on screen
 #set +v
-trap '^^^^^' DEBUG
+trap '^' DEBUG
 #set -v
 # The container runtime is the software that is responsible for running containers.
 # Kubernetes supports several container runtimes: Docker
