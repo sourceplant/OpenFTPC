@@ -15,6 +15,7 @@ fi
 }
 # If you wanted to enable comments on screen
 #set +v
+set -o functrace
 trap '^' DEBUG
 #set -v
 echo '
