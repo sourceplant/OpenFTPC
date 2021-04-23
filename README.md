@@ -10,15 +10,14 @@
     This page informs you of policies regarding the collection, use and disclosure of Personal Information when you use this app. If you choose to use this app, then you agree with this policy.
 </p>
 
-<p><strong>Information Collection and Use</strong></p>
 
+<p><strong>Information Collection and Use</strong></p>
 I do not request, retain or collect any personal information and is not accessible to me in any way.
 
 <p><strong>Log Data</strong></p>
 I do not collect any Log Data i.e your devices’s Internet Protocol (“IP”) address, device name, operating system version, configuration of the app when utilising Service, the time and date of your use of the Service, and other statistics.
 
 <p><strong>Cookies</strong></p>
-
 This app does not uses cookies
 
 <p><strong>Service Providers</strong></p>
